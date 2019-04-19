@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package eSPIMdeskew;
+package eSPIMdeskew_v2;
 
 import org.micromanager.Studio;
 import org.micromanager.data.Processor;
