@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package eSPIMdeskew_v2;
+package eSPIMdeskew;
 
 import org.micromanager.PropertyMap;
 import org.micromanager.Studio;
@@ -51,12 +51,12 @@ public class Deskew implements ProcessorPlugin, SciJavaPlugin{
 
     @Override
     public String getName() {
-        return "eSPIM deskew v2";
+        return "eSPIM deskew";
     }
 
     @Override
     public String getHelpText() {
-        return "Deskew eSPIM data during acquisition with motion correction";
+        return "Deskew eSPIM data during acquisition";
     }
 
     @Override

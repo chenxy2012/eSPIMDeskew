@@ -1,4 +1,4 @@
-package eSPIMdeskew_v2;
+package eSPIMdeskew;
 
 import org.micromanager.PropertyMap;
 import org.micromanager.Studio;
@@ -10,7 +10,6 @@ import org.micromanager.data.ProcessorConfigurator;
 public class DeskewConfigurator extends javax.swing.JFrame implements ProcessorConfigurator{
     
     private Studio studio_;
-    public boolean updateFlag;
     /**
      * Creates new form NewJFrame
      */
@@ -20,7 +19,6 @@ public class DeskewConfigurator extends javax.swing.JFrame implements ProcessorC
      public DeskewConfigurator(Studio studio, PropertyMap settings) {
         initComponents();
         studio_=studio;
-        updateFlag = false;
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -43,17 +41,12 @@ public class DeskewConfigurator extends javax.swing.JFrame implements ProcessorC
         jLabel_timepoint = new javax.swing.JLabel();
         jTextField_interval = new javax.swing.JTextField();
         jCheckBox_saveDeskewFile = new javax.swing.JCheckBox();
-        jCheckBox_motionCorrection = new javax.swing.JCheckBox();
-        jLabel_zstep1 = new javax.swing.JLabel();
-        jTextField_posNumXY = new javax.swing.JTextField();
-        jLabel_zstep2 = new javax.swing.JLabel();
-        jTextField_posNumZ = new javax.swing.JTextField();
-        jLabel_zstep3 = new javax.swing.JLabel();
-        jLabel_zstep4 = new javax.swing.JLabel();
-        jTextField_XYStage = new javax.swing.JTextField();
-        jTextField_ZStage = new javax.swing.JTextField();
-        jLabel_zstep5 = new javax.swing.JLabel();
-        jTextField_basedChannel = new javax.swing.JTextField();
+        jCheckBox_saveLogFile = new javax.swing.JCheckBox();
+        jCheckBox_wideFieldCorrection = new javax.swing.JCheckBox();
+        jTextField_posGroupNum = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jTextField_zStageName = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -65,11 +58,6 @@ public class DeskewConfigurator extends javax.swing.JFrame implements ProcessorC
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 jTextField_zstepMouseExited(evt);
-            }
-        });
-        jTextField_zstep.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField_zstepActionPerformed(evt);
             }
         });
 
@@ -105,114 +93,28 @@ public class DeskewConfigurator extends javax.swing.JFrame implements ProcessorC
 
         jLabel_angleunit.setText("(degree)");
 
-        jLabel_timepoint.setText("Volume interval to process:");
+        jLabel_timepoint.setText("Volume interval to deskew:");
 
         jTextField_interval.setText("1");
-        jTextField_interval.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField_intervalActionPerformed(evt);
-            }
-        });
 
         jCheckBox_saveDeskewFile.setSelected(true);
         jCheckBox_saveDeskewFile.setText("Save deskew file");
-        jCheckBox_saveDeskewFile.addActionListener(new java.awt.event.ActionListener() {
+
+        jCheckBox_saveLogFile.setSelected(true);
+        jCheckBox_saveLogFile.setText("Save log file");
+
+        jCheckBox_wideFieldCorrection.setText("Wide field correction");
+
+        jTextField_posGroupNum.setText("1");
+
+        jLabel1.setText("Position Group Number");
+
+        jLabel2.setText("stage");
+
+        jTextField_zStageName.setText("TIZDrive");
+        jTextField_zStageName.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox_saveDeskewFileActionPerformed(evt);
-            }
-        });
-
-        jCheckBox_motionCorrection.setSelected(true);
-        jCheckBox_motionCorrection.setText("Enable motion correction");
-        jCheckBox_motionCorrection.setActionCommand("MotionCorrection");
-
-        jLabel_zstep1.setText("XY Position Number");
-
-        jTextField_posNumXY.setText("3");
-        jTextField_posNumXY.setToolTipText("");
-        jTextField_posNumXY.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jTextField_posNumXYMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                jTextField_posNumXYMouseExited(evt);
-            }
-        });
-        jTextField_posNumXY.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField_posNumXYActionPerformed(evt);
-            }
-        });
-
-        jLabel_zstep2.setText("Slices per XY");
-
-        jTextField_posNumZ.setText("1");
-        jTextField_posNumZ.setToolTipText("");
-        jTextField_posNumZ.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jTextField_posNumZMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                jTextField_posNumZMouseExited(evt);
-            }
-        });
-        jTextField_posNumZ.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField_posNumZActionPerformed(evt);
-            }
-        });
-
-        jLabel_zstep3.setText("Position XY Stage");
-
-        jLabel_zstep4.setText("Position Z  Stage");
-
-        jTextField_XYStage.setText("XYStage");
-        jTextField_XYStage.setToolTipText("");
-        jTextField_XYStage.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jTextField_XYStageMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                jTextField_XYStageMouseExited(evt);
-            }
-        });
-        jTextField_XYStage.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField_XYStageActionPerformed(evt);
-            }
-        });
-
-        jTextField_ZStage.setText("TIZDrive");
-        jTextField_ZStage.setToolTipText("");
-        jTextField_ZStage.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jTextField_ZStageMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                jTextField_ZStageMouseExited(evt);
-            }
-        });
-        jTextField_ZStage.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField_ZStageActionPerformed(evt);
-            }
-        });
-
-        jLabel_zstep5.setText("Based channel");
-
-        jTextField_basedChannel.setText("0");
-        jTextField_basedChannel.setToolTipText("");
-        jTextField_basedChannel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jTextField_basedChannelMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                jTextField_basedChannelMouseExited(evt);
-            }
-        });
-        jTextField_basedChannel.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField_basedChannelActionPerformed(evt);
+                jTextField_zStageNameActionPerformed(evt);
             }
         });
 
@@ -222,9 +124,6 @@ public class DeskewConfigurator extends javax.swing.JFrame implements ProcessorC
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel_Angle, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
@@ -239,43 +138,27 @@ public class DeskewConfigurator extends javax.swing.JFrame implements ProcessorC
                             .addGap(18, 18, 18)
                             .addComponent(jLabel_Pixelsize)
                             .addGap(18, 18, 18)
-                            .addComponent(jTextField_Pixelsize, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(jTextField_Pixelsize, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jCheckBox_saveDeskewFile)
+                            .addComponent(jLabel_Angle, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel_timepoint)
+                            .addComponent(jLabel1)
+                            .addComponent(jCheckBox_wideFieldCorrection)
+                            .addComponent(jCheckBox_saveLogFile)
+                            .addComponent(jLabel2))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel_zstepunit)
                     .addComponent(jLabel_Pixelsizeunit)
-                    .addComponent(jLabel_angleunit))
-                .addContainerGap(23, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jCheckBox_motionCorrection)
-                    .addComponent(jCheckBox_saveDeskewFile)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel_timepoint)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField_interval, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel_zstep4)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jTextField_ZStage, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel_zstep3)
-                                .addGap(18, 18, 18)
-                                .addComponent(jTextField_XYStage, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGroup(layout.createSequentialGroup()
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel_zstep1)
-                                .addComponent(jLabel_zstep2)
-                                .addComponent(jLabel_zstep5))
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jTextField_posNumZ, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jTextField_posNumXY, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jTextField_basedChannel, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                .addGap(24, 24, 24))
+                    .addComponent(jLabel_angleunit)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(jTextField_posGroupNum, javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jTextField_interval, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE))
+                    .addComponent(jTextField_zStageName, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(76, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -300,36 +183,24 @@ public class DeskewConfigurator extends javax.swing.JFrame implements ProcessorC
                     .addComponent(jLabel_zstepunit))
                 .addGap(18, 18, 18)
                 .addComponent(jCheckBox_saveDeskewFile)
-                .addGap(34, 34, 34)
-                .addComponent(jCheckBox_motionCorrection)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel_zstep1, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField_posNumXY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel_zstep2, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField_posNumZ, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField_basedChannel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel_zstep5, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel_zstep3, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField_XYStage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel_zstep4, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField_ZStage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 68, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel_timepoint)
                     .addComponent(jTextField_interval, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jCheckBox_saveLogFile)
+                .addGap(23, 23, 23)
+                .addComponent(jCheckBox_wideFieldCorrection)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(jTextField_posGroupNum, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(jTextField_zStageName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
-
-        jCheckBox_motionCorrection.getAccessibleContext().setAccessibleName("MotionCorrection");
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -365,77 +236,9 @@ public class DeskewConfigurator extends javax.swing.JFrame implements ProcessorC
         jTextField_Angle.enable();
     }//GEN-LAST:event_jTextField_AngleMouseExited
 
-    private void jCheckBox_saveDeskewFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox_saveDeskewFileActionPerformed
+    private void jTextField_zStageNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField_zStageNameActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jCheckBox_saveDeskewFileActionPerformed
-
-    private void jTextField_posNumXYMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField_posNumXYMouseEntered
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField_posNumXYMouseEntered
-
-    private void jTextField_posNumXYMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField_posNumXYMouseExited
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField_posNumXYMouseExited
-
-    private void jTextField_posNumXYActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField_posNumXYActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField_posNumXYActionPerformed
-
-    private void jTextField_posNumZMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField_posNumZMouseEntered
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField_posNumZMouseEntered
-
-    private void jTextField_posNumZMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField_posNumZMouseExited
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField_posNumZMouseExited
-
-    private void jTextField_posNumZActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField_posNumZActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField_posNumZActionPerformed
-
-    private void jTextField_intervalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField_intervalActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField_intervalActionPerformed
-
-    private void jTextField_XYStageMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField_XYStageMouseEntered
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField_XYStageMouseEntered
-
-    private void jTextField_XYStageMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField_XYStageMouseExited
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField_XYStageMouseExited
-
-    private void jTextField_XYStageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField_XYStageActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField_XYStageActionPerformed
-
-    private void jTextField_ZStageMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField_ZStageMouseEntered
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField_ZStageMouseEntered
-
-    private void jTextField_ZStageMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField_ZStageMouseExited
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField_ZStageMouseExited
-
-    private void jTextField_ZStageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField_ZStageActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField_ZStageActionPerformed
-
-    private void jTextField_basedChannelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField_basedChannelMouseEntered
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField_basedChannelMouseEntered
-
-    private void jTextField_basedChannelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField_basedChannelMouseExited
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField_basedChannelMouseExited
-
-    private void jTextField_basedChannelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField_basedChannelActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField_basedChannelActionPerformed
-
-    private void jTextField_zstepActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField_zstepActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField_zstepActionPerformed
+    }//GEN-LAST:event_jTextField_zStageNameActionPerformed
 
     /**
      * @param args the command line arguments
@@ -473,28 +276,23 @@ public class DeskewConfigurator extends javax.swing.JFrame implements ProcessorC
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JCheckBox jCheckBox_motionCorrection;
     private javax.swing.JCheckBox jCheckBox_saveDeskewFile;
+    private javax.swing.JCheckBox jCheckBox_saveLogFile;
+    private javax.swing.JCheckBox jCheckBox_wideFieldCorrection;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel_Angle;
     private javax.swing.JLabel jLabel_Pixelsize;
     private javax.swing.JLabel jLabel_Pixelsizeunit;
     private javax.swing.JLabel jLabel_angleunit;
     private javax.swing.JLabel jLabel_timepoint;
     private javax.swing.JLabel jLabel_zstep;
-    private javax.swing.JLabel jLabel_zstep1;
-    private javax.swing.JLabel jLabel_zstep2;
-    private javax.swing.JLabel jLabel_zstep3;
-    private javax.swing.JLabel jLabel_zstep4;
-    private javax.swing.JLabel jLabel_zstep5;
     private javax.swing.JLabel jLabel_zstepunit;
     private javax.swing.JTextField jTextField_Angle;
     private javax.swing.JTextField jTextField_Pixelsize;
-    private javax.swing.JTextField jTextField_XYStage;
-    private javax.swing.JTextField jTextField_ZStage;
-    private javax.swing.JTextField jTextField_basedChannel;
     private javax.swing.JTextField jTextField_interval;
-    private javax.swing.JTextField jTextField_posNumXY;
-    private javax.swing.JTextField jTextField_posNumZ;
+    private javax.swing.JTextField jTextField_posGroupNum;
+    private javax.swing.JTextField jTextField_zStageName;
     private javax.swing.JTextField jTextField_zstep;
     // End of variables declaration//GEN-END:variables
 
@@ -513,32 +311,26 @@ public class DeskewConfigurator extends javax.swing.JFrame implements ProcessorC
     public int getVolumeinterval() {
       return (int) Integer.parseInt(jTextField_interval.getText());
     }
-    public int getPosNumXY() {
-      return (int) Integer.parseInt(jTextField_posNumXY.getText());
-    }
-    public int getPosNumZ() {
-      return (int) Integer.parseInt(jTextField_posNumZ.getText());
-    }
-    public int getBasedChannel() {
-      return (int) Integer.parseInt(jTextField_basedChannel.getText());
-    }
-    
-    public String getXYStageName(){
-        return jTextField_XYStage.getText();
-    }
-    
-    public String getZStageName(){
-        return jTextField_ZStage.getText();
-    }
     
     public boolean getSaveFileCheckbox(){
         return (boolean) jCheckBox_saveDeskewFile.isSelected();
     }
-    public boolean getMotionCorrectionCheckbox(){
-        return (boolean) jCheckBox_motionCorrection.isSelected();
+    public boolean getSaveLogFileCheckbox(){
+        return (boolean) jCheckBox_saveLogFile.isSelected();
     }
     
-
+    public boolean getWideFieldCorrectionCheckBox(){
+        return (boolean) jCheckBox_wideFieldCorrection.isSelected();
+    }
+    
+    public int getPositionGroupNum() {
+      return (int) Integer.parseInt(jTextField_posGroupNum.getText());
+    }
+    
+    public String getzStageName() {
+      return (String) jTextField_zStageName.getText();
+    }
+    
     
     @Override
     public void showGUI() {
