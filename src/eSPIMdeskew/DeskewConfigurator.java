@@ -47,6 +47,7 @@ public class DeskewConfigurator extends javax.swing.JFrame implements ProcessorC
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jTextField_zStageName = new javax.swing.JTextField();
+        jCheckBox_posAdj = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -118,6 +119,8 @@ public class DeskewConfigurator extends javax.swing.JFrame implements ProcessorC
             }
         });
 
+        jCheckBox_posAdj.setText("Position adjusting");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -148,7 +151,8 @@ public class DeskewConfigurator extends javax.swing.JFrame implements ProcessorC
                             .addComponent(jLabel1)
                             .addComponent(jCheckBox_wideFieldCorrection)
                             .addComponent(jCheckBox_saveLogFile)
-                            .addComponent(jLabel2))))
+                            .addComponent(jLabel2)
+                            .addComponent(jCheckBox_posAdj))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel_zstepunit)
@@ -195,11 +199,13 @@ public class DeskewConfigurator extends javax.swing.JFrame implements ProcessorC
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(jTextField_posGroupNum, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(jTextField_zStageName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                    .addComponent(jTextField_zStageName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jCheckBox_posAdj)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -276,6 +282,7 @@ public class DeskewConfigurator extends javax.swing.JFrame implements ProcessorC
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JCheckBox jCheckBox_posAdj;
     private javax.swing.JCheckBox jCheckBox_saveDeskewFile;
     private javax.swing.JCheckBox jCheckBox_saveLogFile;
     private javax.swing.JCheckBox jCheckBox_wideFieldCorrection;
@@ -331,6 +338,9 @@ public class DeskewConfigurator extends javax.swing.JFrame implements ProcessorC
       return (String) jTextField_zStageName.getText();
     }
     
+    public boolean getPosAdjCheckBox(){
+        return (boolean) jCheckBox_posAdj.isSelected();
+    }
     
     @Override
     public void showGUI() {

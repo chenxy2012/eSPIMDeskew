@@ -80,16 +80,18 @@ public class DeskewProcessor extends Processor{
     // log file    
     public String saveLogPath;
     public String saveLogPathDebug;
-    
+    public FileWriter generalFileWriter;
     public PrintWriter logFileWriter;
     // for debug
     public PrintWriter logFileWriterDebug;
     public PrintWriter dataFileWriter;
     
     public boolean wideFieldMotionCorrected;
+    public boolean brightFieldChannelEngaged;
     public int positionGroupNum;
     
     public boolean acqusitionValid;
+    public boolean posAdj;
     
     //brightfield correction
     double[] offset;
@@ -98,7 +100,8 @@ public class DeskewProcessor extends Processor{
     String zStage;
     
     double wideFieldPixelSize;
-    
+    // PFS adj
+    double[] PFSzPos;
     
     public DeskewProcessor(Studio studio, DeskewConfigurator MyConfigurator)
     {
@@ -132,6 +135,7 @@ public class DeskewProcessor extends Processor{
             nposition = 1;
         }
         
+        
        
         
         // calculate parameters for deskew
@@ -153,6 +157,10 @@ public class DeskewProcessor extends Processor{
         //zStage = "TIZDrive";
         
         wideFieldPixelSize = 0.2167;
+        
+        brightFieldChannelEngaged = false; 
+        posAdj = configurator_.getPosAdjCheckBox();
+        PFSzPos = new double[nposition];
     } 
     
     @Override
@@ -173,11 +181,11 @@ public class DeskewProcessor extends Processor{
                 if (saveLogFile){
                     saveLogPath = studio_.displays().getCurrentWindow().getDatastore().getSavePath() + "_logFile.txt";
                     saveLogPathDebug = studio_.displays().getCurrentWindow().getDatastore().getSavePath() + "_logFileDebug.txt";  
-                    try {
+                    /*try {
                         logFileWriter = new PrintWriter(saveLogPath, "UTF-8");
                     } catch (IOException ex){
                         Logger.getLogger(DeskewProcessor.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+                    }*/
                     try {
                         logFileWriterDebug = new PrintWriter(saveLogPathDebug, "UTF-8");
                     } catch (IOException ex){
@@ -217,6 +225,7 @@ public class DeskewProcessor extends Processor{
             nFrame = (int) seqSettings_.numFrames;
             zStage = configurator_.getzStageName();
             
+            PFSzPos = new double[nposition];
             if (wideFieldMotionCorrected)
             {
                 if (seqSettings_.channels.get(nchannel-1).doZStack==true)
@@ -257,15 +266,29 @@ public class DeskewProcessor extends Processor{
             else{
                 if (seqSettings_.channels.get(nchannel-1).doZStack==false)
                 {
-                    String errorMessage = "We are not in Motion Corrected Mode, please abort the current acqusition and do Z-stack in all channels";
-                    acqusitionValid = false;
-                    JOptionPane.showMessageDialog(null, errorMessage);
-                    return;
+                    brightFieldChannelEngaged = true;
+                    //String errorMessage = "We are not in Motion Corrected Mode, please abort the current acqusition and do Z-stack in all channels";
+                    //acqusitionValid = false;
+                    //JOptionPane.showMessageDialog(null, errorMessage);
+                    //return;
+                }
+                else{
+                    brightFieldChannelEngaged = false;
                 }
             }
             
             
             if (saveLogFile){
+                // new here
+                try {
+                    generalFileWriter = new FileWriter(saveLogPath,true);
+                    logFileWriter = new PrintWriter(generalFileWriter);
+                    //logFileWriter = new PrintWriter(saveLogPath, "UTF-8");
+                } catch (IOException ex){
+                    Logger.getLogger(DeskewProcessor.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                
+                
                 String acqusitonInfo = "Acqusition info: t=" + Integer.toString(nFrame)
                         + ", z=" + Integer.toString(framePerVolume)
                         + ", c=" + Integer.toString(nchannel)
@@ -277,6 +300,10 @@ public class DeskewProcessor extends Processor{
                 logFileWriter.println(acqusitonInfo);
                 logFileWriter.println("");
                 logFileWriter.println("");
+                
+                // close
+                logFileWriter.close();
+                
                 //logFileWriterDebug.println(acqusitonInfo);
                 //logFileWriterDebug.close();
             }
@@ -365,7 +392,7 @@ public class DeskewProcessor extends Processor{
                 //String logMessage = "laoziguanle";
                 //JOptionPane.showMessageDialog(null, logMessage);
                 //logFileWriter.println(logMessage);
-                logFileWriter.close();
+                //logFileWriter.close();
                 logFileWriterDebug.close();
             }
         }
@@ -383,6 +410,11 @@ public class DeskewProcessor extends Processor{
                 upDatePositionList(image);
             }
         }
+        
+        if(adjPFSPosRequest(image)){
+            adjPFSPos(image);
+        }
+        
         pc.outputImage(image);
         /*int channelIndex = image.getCoords().getChannel();
         if (channelIndex==2){
@@ -404,7 +436,11 @@ public class DeskewProcessor extends Processor{
         int zIndex = image.getCoords().getZ();
         int channelIndex = image.getCoords().getChannel();
         if (!wideFieldMotionCorrected){
-            return ( saveLogFile && zIndex == (framePerVolume-1) && channelIndex == (nchannel - 1));
+            if (!brightFieldChannelEngaged){
+                return ( saveLogFile && zIndex == (framePerVolume-1) && channelIndex == (nchannel - 1));
+            }else{
+                return ( saveLogFile && zIndex == (framePerVolume-1) && channelIndex == (nchannel - 2));
+            }
         }else{
             return ( saveLogFile && zIndex == (framePerVolume-1) && channelIndex == (nchannel - 2));
         }
@@ -427,7 +463,11 @@ public class DeskewProcessor extends Processor{
         int index = image.getCoords().getTimePoint();
         int channelIndex = image.getCoords().getChannel();  
         if (!wideFieldMotionCorrected){
-            return (index % interval_ == 0);
+            if (brightFieldChannelEngaged){
+                return ((index % interval_ == 0)&&(channelIndex!=(nchannel - 1)));
+            }else{
+                return (index % interval_ == 0);
+            }
         }else{
             return ((index % interval_ == 0)&&(channelIndex!=(nchannel - 1)));
         }
@@ -446,7 +486,11 @@ public class DeskewProcessor extends Processor{
         int channelIndex = image.getCoords().getChannel();  
         int positionIndex = image.getCoords().getStagePosition();
         if (!wideFieldMotionCorrected){
-            return (zIndex == (framePerVolume-1) && channelIndex == (nchannel - 1) && positionIndex == (nposition - 1));
+            if (!brightFieldChannelEngaged){
+                return (zIndex == (framePerVolume-1) && channelIndex == (nchannel - 1) && positionIndex == (nposition - 1));
+            }else{
+                return (zIndex == (framePerVolume-1) && channelIndex == (nchannel - 2) && positionIndex == (nposition - 1));
+            }
         }else{
             return (zIndex == (framePerVolume-1) && channelIndex == (nchannel - 2) && positionIndex == (nposition - 1));
         }
@@ -469,7 +513,11 @@ public class DeskewProcessor extends Processor{
         
         int timeEnd = (int) seqSettings_.numFrames;
         if (!wideFieldMotionCorrected){
-            return (timeIndex == (timeEnd-1) && zIndex == (framePerVolume-1) && channelIndex == (nchannel - 1) && positionIndex == (nposition - 1));
+            if (!brightFieldChannelEngaged){
+                return (timeIndex == (timeEnd-1) && zIndex == (framePerVolume-1) && channelIndex == (nchannel - 1) && positionIndex == (nposition - 1));
+            }else{
+                return (timeIndex == (timeEnd-1) && zIndex == (framePerVolume-1) && channelIndex == (nchannel - 2) && positionIndex == (nposition - 1));
+            }
         }else{
             return (timeIndex == (timeEnd-1) && zIndex == (framePerVolume-1) && channelIndex == (nchannel - 2) && positionIndex == (nposition - 1));
         }
@@ -588,8 +636,8 @@ public class DeskewProcessor extends Processor{
         //double[] currentOffset = new double[2];
         double currentOffset0 = offset[2*groupIndex];
         double currentOffset1 = offset[2*groupIndex+1];
-        double tsh = 5;
-        double kFactor = 0.5;
+        double tsh = 30;
+        double kFactor = 0.6;
         
         if ((java.lang.Math.abs(currentOffset0)<tsh)&&(java.lang.Math.abs(currentOffset1)<tsh)){
             for(int posInd = 0;posInd<4;posInd++){
@@ -704,12 +752,22 @@ public class DeskewProcessor extends Processor{
         //currentOffset = getMaxAbs(corr,imageHight, imageWidth);
         currentOffset = getMaxAbsNew(corr,imageHight, imageWidth);
         if (saveLogFile){
+            
+            try {
+                generalFileWriter = new FileWriter(saveLogPath,true);
+                logFileWriter = new PrintWriter(generalFileWriter);
+                //logFileWriter = new PrintWriter(saveLogPath, "UTF-8");
+            } catch (IOException ex){
+                Logger.getLogger(DeskewProcessor.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
             String offsetInfo = "Offset: group" + Integer.toString(groupIndex) + ", offset0 = " + Double.toString(currentOffset[0])
                     + ", offset1 = " + Double.toString(currentOffset[1]);
             
             logFileWriter.println(offsetInfo);
             logFileWriter.println("");
             logFileWriter.println("");
+            logFileWriter.close();
         }
         offset[2*groupIndex] = currentOffset[0];
         offset[2*groupIndex+1] = currentOffset[1];
@@ -823,6 +881,15 @@ public class DeskewProcessor extends Processor{
     }
     
     private void updateInfo(Image image){
+        
+        try {
+            generalFileWriter = new FileWriter(saveLogPath,true);
+            logFileWriter = new PrintWriter(generalFileWriter);
+            //logFileWriter = new PrintWriter(saveLogPath, "UTF-8");
+        } catch (IOException ex){
+            Logger.getLogger(DeskewProcessor.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
         if (!wideFieldMotionCorrected){
             String logMessage = "";
             int currentTimeIndex = image.getCoords().getTimePoint();
@@ -881,8 +948,10 @@ public class DeskewProcessor extends Processor{
                     + ", z = " + Double.toString(realZpostion);
             logMessage = realPosInfo;
             logFileWriter.println(logMessage);
-
-            /*
+            
+            
+            PFSzPos[currentPositionIndex] = realZpostion;
+            
             // Add interested device property to log file
             // for debug use mmc.getProperty("Camera", "Mode");
 
@@ -891,8 +960,8 @@ public class DeskewProcessor extends Processor{
             String propertyName;
 
             // group by group
-            propertyDevice = "TIPSFOffset";
-            propertyName = "status";
+            propertyDevice = "TIPFSStatus";
+            propertyName = "Status";
             try{
                  propertyInfo = mmc.getProperty(propertyDevice, propertyName);
             }  catch (Exception ex) {
@@ -900,7 +969,18 @@ public class DeskewProcessor extends Processor{
             }
             logMessage  = propertyDevice + "-" + propertyName + " : " + propertyInfo;
             logFileWriter.println(logMessage);
-            */
+            
+            
+            propertyDevice = "TIPFSOffset";
+            propertyName = "Position";
+            try{
+                 propertyInfo = mmc.getProperty(propertyDevice, propertyName);
+            }  catch (Exception ex) {
+                Logger.getLogger(DeskewProcessor.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            logMessage  = propertyDevice + "-" + propertyName + " : " + propertyInfo;
+            logFileWriter.println(logMessage);
+            
 
             logFileWriter.println("");
             logFileWriter.println("");
@@ -963,10 +1043,10 @@ public class DeskewProcessor extends Processor{
             logMessage = realPosInfo;
             logFileWriter.println(logMessage);
 
-            /*
+            
             // Add interested device property to log file
             // for debug use mmc.getProperty("Camera", "Mode");
-
+            /*
             String propertyInfo ="";
             String propertyDevice;
             String propertyName;
@@ -981,12 +1061,44 @@ public class DeskewProcessor extends Processor{
             }
             logMessage  = propertyDevice + "-" + propertyName + " : " + propertyInfo;
             logFileWriter.println(logMessage);
-            */
+            
 
             logFileWriter.println("");
             logFileWriter.println("");
-            
+            */
         }
+        logFileWriter.close();
     }
+    
+    private boolean adjPFSPosRequest(Image image){
+        int timeIndex = image.getCoords().getTimePoint();
+        int zIndex = image.getCoords().getZ();
+        int channelIndex = image.getCoords().getChannel();
+        int positionIndex = image.getCoords().getStagePosition();
+        if ((!wideFieldMotionCorrected) && (posAdj)){
+            return ( (positionIndex==(nposition-1)) && (timeIndex>=1) &&(zIndex == (framePerVolume-1)) && (channelIndex == (nchannel - 1)));
+        }else{
+            return false;
+        }
+        
+    }
+    private void adjPFSPos(Image image){
+        PositionList pl = studio_.positions().getPositionList();
+        for(int posInd = 0;posInd<nposition;posInd++){
+            MultiStagePosition msp = pl.getPosition(posInd);
+            //String lb = msp.getLabel();
+            //double xx = msp.get(xyStage).x;
+            //double yy = msp.get(xyStage).y;
+            double zz_new = PFSzPos[posInd];
+            StagePosition zz_sp = msp.get(zStage);
+            msp.remove(zz_sp);
+            zz_sp.x = zz_new;
+            msp.add(zz_sp);
+            pl.replacePosition(posInd, msp);
+        }
+        studio_.positions().setPositionList(pl);
+    }
+    
+    
 }
  
